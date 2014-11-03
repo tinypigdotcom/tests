@@ -11,7 +11,7 @@ use warnings;
 use File::Copy;
 use IO::File;
 use Data::Dumper;
-use Test::More tests => 7;
+use Test::More tests => 10;
 
 my $BLANK_PROJECTS_LIST                = BLANK_PROJECTS_LIST();
 my $FIRST_PROJECT                      = FIRST_PROJECT();
@@ -33,6 +33,7 @@ if ( -f $project_file_path ) {
     die "unlink $project_file_path failed";
 }
 $ENV{PDUMP} = $project_file_path;
+$ENV{EDITOR} = '/usr/bin/cat';
 
 my @test_files = make_test_files();
 
@@ -54,6 +55,10 @@ for my $file (@test_files) {
 }
 $proj_output = `f`;
 like( $proj_output, $FIRST_PROJECT_FILES_RE, 'First project files' );
+$proj_output = `fa`;
+like( $proj_output, qr/contents_papaya/,     'Edit all files 1' );
+like( $proj_output, qr/contents_raspberry/,  'Edit all files 2' );
+like( $proj_output, qr/contents_strawberry/, 'Edit all files 3' );
 
 my $letter = shift @remove_files;
 $proj_output = `f -$letter`;
@@ -96,9 +101,9 @@ sub make_test_files {
     for (@tf) {
         my $test_file = "$tmp_dir/$_";
         push @retval, $test_file;
-        my $ofh = IO::File->new( $test_file, '>>' );
+        my $ofh = IO::File->new( $test_file, '>' );
         die "couldn't create test file $test_file" if ( !defined $ofh );
-        print $ofh q{};
+        print $ofh qq{contents_$_};
         $ofh->close;
     }
     return @retval;
@@ -123,7 +128,6 @@ sub fruits_list {
 
 sub BLANK_PROJECTS_LIST {
     return q{Projects:
-* a          placeholder    } . q{
 };
 }
 
@@ -135,7 +139,6 @@ Current files:
 
 sub FIRST_PROJECT_LIST {
     return q{Projects:
-  a          placeholder    } . q{
 * apple      banana         } . q{
 };
 }
