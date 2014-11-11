@@ -37,14 +37,14 @@ for my $file (@bins) {
     my $purpose_found = 0;
     INNER:
     while(<$ifh>) {
-        if ( /#\s*purpose:\s*(.*)/ ) {
+        if ( /#\s*purpose:\s*\w/ ) {
             $purpose_found++;
             last INNER;
         }
     }
     $ifh->close;
     $number_of_tests++;
-    is($purpose_found,1,"$file");
+    is($purpose_found,1,"purpose: $file");
 }
 
 done_testing($number_of_tests);
