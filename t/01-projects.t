@@ -13,6 +13,11 @@ use IO::File;
 use Data::Dumper;
 use Test::More tests => 10;
 
+my $tmp_dir = "$ENV{HOME}/tmp";
+if ( !-d $tmp_dir ) {
+    mkdir $tmp_dir or die "mkdir $tmp_dir failed: $!";
+}
+
 my $BLANK_PROJECTS_LIST                = BLANK_PROJECTS_LIST();
 my $FIRST_PROJECT                      = FIRST_PROJECT();
 my $FIRST_PROJECT_LIST                 = FIRST_PROJECT_LIST();
@@ -20,11 +25,6 @@ my $FIRST_PROJECT_FILES_RE             = FIRST_PROJECT_FILES_RE();
 my $FIRST_PROJECT_FILES_MINUS_ONE_RE   = FIRST_PROJECT_FILES_MINUS_ONE_RE();
 my $FIRST_PROJECT_FILES_MINUS_TWO_RE   = FIRST_PROJECT_FILES_MINUS_TWO_RE();
 my $FIRST_PROJECT_FILES_MINUS_THREE_RE = FIRST_PROJECT_FILES_MINUS_THREE_RE();
-
-my $tmp_dir = "$ENV{HOME}/tmp";
-if ( !-d $tmp_dir ) {
-    mkdir $tmp_dir or die "mkdir $tmp_dir failed: $!";
-}
 
 my $project_file      = '.pdump_test';
 my $project_file_path = "$ENV{HOME}/$project_file";
@@ -150,11 +150,11 @@ sub FIRST_PROJECT_FILES_RE {
         \s+
         Current[ ]files:
         \s+
-        p[ ]papaya\s+/home/dbradford/tmp
+        p[ ]papaya\s+$tmp_dir
         \s+
-        r[ ]raspberry\s+/home/dbradford/tmp
+        r[ ]raspberry\s+$tmp_dir
         \s+
-        s[ ]strawberry\s+/home/dbradford/tmp
+        s[ ]strawberry\s+$tmp_dir
         \s+
         $
     }x;
@@ -167,9 +167,9 @@ sub FIRST_PROJECT_FILES_MINUS_ONE_RE {
         \s+
         Current[ ]files:
         \s+
-        r[ ]raspberry\s+/home/dbradford/tmp
+        r[ ]raspberry\s+$tmp_dir
         \s+
-        s[ ]strawberry\s+/home/dbradford/tmp
+        s[ ]strawberry\s+$tmp_dir
         \s+
         $
     }x;
@@ -182,7 +182,7 @@ sub FIRST_PROJECT_FILES_MINUS_TWO_RE {
         \s+
         Current[ ]files:
         \s+
-        s[ ]strawberry\s+/home/dbradford/tmp
+        s[ ]strawberry\s+$tmp_dir
         \s+
         $
     }x;
