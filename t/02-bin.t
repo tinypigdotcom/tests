@@ -17,34 +17,44 @@ my $number_of_tests = 0;
 # my @dot_files = grep { /^\./ && -f "$some_dir/$_" } get_directory($target);
 sub get_directory {
     my ($dir) = @_;
-    opendir(my $dh, $dir) || die "can't opendir $dir: $!";
+    opendir( my $dh, $dir ) || die "can't opendir $dir: $!";
     my @files = readdir($dh);
     closedir $dh;
     return @files;
 }
 
 my $bin_directory = "$ENV{HOME}/bin";
-my @bins = grep { !/^[._]/ } get_directory($bin_directory);
+my @bins = map { "$bin_directory/$_" } grep { !/^[._]/ } get_directory($bin_directory);
+
+my $bin_directory2 = "$ENV{HOME}/bin2";
+push @bins, map { "$bin_directory2/$_" } grep { !/^[._]/ } get_directory($bin_directory2);
 
 OUTER:
 for my $file (@bins) {
-    if ( $file eq 'COPYING' or $file eq 'README.md' ) {
+    if ( $file eq "$bin_directory/COPYING" or $file eq "$bin_directory/README.md" ) {
         next OUTER;
     }
-    my $ifh = IO::File->new("$bin_directory/$file", '<');
-    die if (!defined $ifh);
+    my $ifh = IO::File->new( $file, '<' );
+    die if ( !defined $ifh );
 
     my $purpose_found = 0;
-    INNER:
-    while(<$ifh>) {
-        if ( /#\s*purpose:\s*\w/ ) {
-            $purpose_found++;
-            last INNER;
+    my $version_found = 0;
+  INNER:
+    while (<$ifh>) {
+        if (/#\s*purpose:\s*\w/) {
+            $purpose_found = 1;
+        }
+        if (/VERSION/) {
+            $version_found = 1;
         }
     }
     $ifh->close;
+
     $number_of_tests++;
-    is($purpose_found,1,"purpose: $file");
+    is( $purpose_found, 1, "purpose: $file" );
+
+    $number_of_tests++;
+    is( $version_found, 1, "version: $file" );
 }
 
 done_testing($number_of_tests);
