@@ -27,7 +27,9 @@ my $bin_directory = "$ENV{HOME}/bin";
 my @bins = map { "$bin_directory/$_" } grep { !/^[._]/ } get_directory($bin_directory);
 
 my $bin_directory2 = "$ENV{HOME}/bin2";
-push @bins, map { "$bin_directory2/$_" } grep { !/^[._]/ } get_directory($bin_directory2);
+if ( -d $bin_directory2 ) {
+    push @bins, map { "$bin_directory2/$_" } grep { !/^[._]/ } get_directory($bin_directory2);
+}
 
 OUTER:
 for my $file (@bins) {
