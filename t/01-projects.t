@@ -33,7 +33,7 @@ if ( -f $project_file_path ) {
     die "unlink $project_file_path failed";
 }
 $ENV{PDUMP} = $project_file_path;
-$ENV{EDITOR} = '/usr/bin/cat';
+$ENV{EDITOR} = '/bin/cat';
 
 my @test_files = make_test_files();
 
