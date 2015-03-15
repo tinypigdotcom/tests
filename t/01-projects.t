@@ -13,6 +13,8 @@ use IO::File;
 use Data::Dumper;
 use Test::More tests => 10;
 
+my $shell = '/bin/bash';
+
 my $tmp_dir = "$ENV{HOME}/tmp";
 if ( !-d $tmp_dir ) {
     mkdir $tmp_dir or die "mkdir $tmp_dir failed: $!";
@@ -37,11 +39,11 @@ $ENV{EDITOR} = '/bin/cat';
 
 my @test_files = make_test_files();
 
-my $proj_output = `p`;
+my $proj_output = `$shell -c "p"`;
 is( $proj_output, $BLANK_PROJECTS_LIST, 'Blank projects list' );
-$proj_output = `p apple banana`;
+$proj_output = `$shell -c "p apple banana"`;
 is( $proj_output, $FIRST_PROJECT, 'First project' );
-$proj_output = `p`;
+$proj_output = `$shell -c "p"`;
 is( $proj_output, $FIRST_PROJECT_LIST, 'First project list' );
 
 my @remove_files;
@@ -50,19 +52,19 @@ for my $file (@test_files) {
     if ( $file =~ m{/([^/])[^/]*$} ) {
         $letter = $1;
     }
-    $proj_output = `f $letter $file`;
+    $proj_output = `$shell -c "f $letter $file"`;
     push @remove_files, $letter;
 }
-$proj_output = `f`;
+$proj_output = `$shell -c "f"`;
 like( $proj_output, $FIRST_PROJECT_FILES_RE, 'First project files' );
-$proj_output = `fa`;
+$proj_output = `$shell -c "fa"`;
 like( $proj_output, qr/contents_papaya/,     'Edit all files 1' );
 like( $proj_output, qr/contents_raspberry/,  'Edit all files 2' );
 like( $proj_output, qr/contents_strawberry/, 'Edit all files 3' );
 
 my $letter = shift @remove_files;
-$proj_output = `f -$letter`;
-$proj_output = `f`;
+$proj_output = `$shell -c "f -$letter"`;
+$proj_output = `$shell -c "f"`;
 like(
     $proj_output,
     $FIRST_PROJECT_FILES_MINUS_ONE_RE,
@@ -70,8 +72,8 @@ like(
 );
 
 $letter      = shift @remove_files;
-$proj_output = `f -$letter`;
-$proj_output = `f`;
+$proj_output = `$shell -c "f -$letter"`;
+$proj_output = `$shell -c "f"`;
 like(
     $proj_output,
     $FIRST_PROJECT_FILES_MINUS_TWO_RE,
@@ -79,16 +81,16 @@ like(
 );
 
 $letter      = shift @remove_files;
-$proj_output = `f -$letter`;
-$proj_output = `f`;
+$proj_output = `$shell -c "f -$letter"`;
+$proj_output = `$shell -c "f"`;
 like(
     $proj_output,
     $FIRST_PROJECT_FILES_MINUS_THREE_RE,
     'First project files minus three'
 );
 
-$proj_output = `p orange starfruit`;
-$proj_output = `p`;
+$proj_output = `$shell -c "p orange starfruit"`;
+$proj_output = `$shell -c "p"`;
 
 #########################
 
