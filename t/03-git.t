@@ -21,6 +21,9 @@ die if ( !defined $ifh );
 my $mode = 0755;
 while (my $dir=<$ifh>) {
     chomp $dir;
+    if ( ! -d $dir ) {
+        next;
+    }
     my $pre_commit = 0;
     my $target_pre_commit = "$dir/hooks/pre-commit";
     # unlink $target_pre_commit;
