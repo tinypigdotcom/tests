@@ -43,7 +43,7 @@ for my $file (@bins) {
     my $version_found = 0;
   INNER:
     while (<$ifh>) {
-        if (/#\s*purpose:\s*\w/) {
+        if (/#\s*purpose:\s*\S/) {
             $purpose_found = 1;
         }
         if (/VERSION/) {
